@@ -1,6 +1,7 @@
 package com.megacitycab.dao;
 
 import com.megacitycab.model.Fleet;
+import com.megacitycab.model.VehicleType;
 import com.megacitycab.util.DatabaseUtil;
 
 import java.sql.Connection;
@@ -14,7 +15,7 @@ public class FleetDAO {
         try (Connection conn = DatabaseUtil.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, fleet.getDriverName());
-            stmt.setString(2, fleet.getVehicleType());
+            stmt.setObject(2, fleet.getVehicleType());
             stmt.setString(3, fleet.getPlateNumber());
             stmt.executeUpdate();
         } catch (SQLException e) {
@@ -32,7 +33,7 @@ public class FleetDAO {
                 return new Fleet(
                         rs.getInt("id"),
                         rs.getString("driver_name"),
-                        rs.getString("vehicle_type"),
+                        (VehicleType) rs.getObject("vehicle_type"),
                         rs.getString("plate_number"),
                         rs.getString("phone_number")
                 );

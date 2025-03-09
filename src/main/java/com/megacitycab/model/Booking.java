@@ -9,17 +9,19 @@ public class Booking {
     private Fleet fleet;
     private String pickup;
     private String destination;
+    private double distance;
     private LocalDateTime bookingDate;
 
     // Constructors
     public Booking() {}
 
-    public Booking(int id, Customer customer, Fleet fleet, String pickup, String destination, LocalDateTime bookingDate) {
+    public Booking(int id, Customer customer, Fleet fleet, String pickup, String destination, double distance, LocalDateTime bookingDate) {
         this.id = id;
         this.customer = customer;
         this.fleet = fleet;
         this.pickup = pickup;
         this.destination = destination;
+        this.distance = distance;
         this.bookingDate = bookingDate;
     }
 
@@ -62,6 +64,14 @@ public class Booking {
 
     public void setDestination(String destination) {
         this.destination = destination;
+    }
+
+    public double getDistance() {
+        return distance;
+    }
+
+    public void setDistance(double distance) {
+        this.distance = distance;
     }
 
     public LocalDateTime getBookingDate() {
