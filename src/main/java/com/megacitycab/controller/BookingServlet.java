@@ -36,7 +36,7 @@ public class BookingServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         // Show booking form
-        req.getRequestDispatcher("/WEB-INF/views/bookingForm.jsp").forward(req, resp);
+        req.getRequestDispatcher("/WEB-INF/views/protected/bookingForm.jsp").forward(req, resp);
     }
 
     @Override
@@ -67,7 +67,7 @@ public class BookingServlet extends HttpServlet {
         bookingService.createBooking(bookingDTO, strategy);
 
         // Redirect to success page
-        req.getRequestDispatcher("/WEB-INF/views/success.jsp").forward(req, resp);
+        req.getRequestDispatcher("/WEB-INF/views/protected/success.jsp").forward(req, resp);
     }
 
     /**

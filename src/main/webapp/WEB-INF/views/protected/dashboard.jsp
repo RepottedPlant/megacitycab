@@ -1,6 +1,10 @@
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard - Megacity Cab</title>
   <style>
     body {
@@ -58,30 +62,32 @@
 <div class="header">
   <h1>Dashboard</h1>
   <p>Welcome, ${user.username} (${user.role})</p>
+  <p>Debug: User Role = ${user.role}</p> <!-- Debug statement -->
 </div>
 
 <div class="container">
   <div class="menu">
-    <a href="${pageContext.request.contextPath}/booking-management" class="menu-item">
+    <a href="${pageContext.request.contextPath}/protected/booking-management" class="menu-item">
       <h2>Booking Management</h2>
     </a>
-    <a href="${pageContext.request.contextPath}/customer-management" class="menu-item">
+    <a href="${pageContext.request.contextPath}/protected/customer-management" class="menu-item">
       <h2>Customer Management</h2>
     </a>
-    <a href="${pageContext.request.contextPath}/fleet-management" class="menu-item">
+    <a href="${pageContext.request.contextPath}/protected/fleet-management" class="menu-item">
       <h2>Fleet Management</h2>
     </a>
-
+  </div>
     <%-- Show User Management and Reports only for Admins --%>
-    <c:if test="${user.role == 'admin'}">
-      <a href="${pageContext.request.contextPath}/user-management" class="menu-item">
+  <c:if test="${user.role == 'admin'}">
+    <div class="menu">
+      <a href="${pageContext.request.contextPath}/protected/user-management" class="menu-item">
         <h2>User Management</h2>
       </a>
-      <a href="${pageContext.request.contextPath}/reports" class="menu-item">
+      <a href="${pageContext.request.contextPath}/protected/reports" class="menu-item">
         <h2>Reports</h2>
       </a>
-    </c:if>
-  </div>
+    </div>
+  </c:if>
 
   <div class="logout">
     <a href="${pageContext.request.contextPath}/logout">Logout</a>

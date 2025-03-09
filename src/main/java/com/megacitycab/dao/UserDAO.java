@@ -28,13 +28,29 @@ public class UserDAO {
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, username);
             ResultSet rs = stmt.executeQuery();
+
+            // Debug: Print SQL query and result
+            System.out.println("Executing SQL: " + sql);
+
             if (rs.next()) {
-                return new User(
+                // Debug: Print user found
+                System.out.println("User found: " + rs.getString("username"));
+
+                // Fetch the user data
+                User user = new User(
                         rs.getInt("id"),
                         rs.getString("username"),
                         rs.getString("password"),
                         rs.getString("role")
                 );
+
+                // Debug: Print user details
+                System.out.println("User fetched from DB: " + user);
+                return user;
+            } else {
+                // Debug: Print user not found
+                System.out.println("User not found");
+                return null;
             }
         } catch (SQLException e) {
             e.printStackTrace();

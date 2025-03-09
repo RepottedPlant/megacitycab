@@ -22,6 +22,13 @@
       <scope>provided</scope>
     </dependency>
 
+    <!-- JSTL (JavaServer Pages Standard Tag Library) -->
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>jstl</artifactId>
+      <version>1.2</version>
+    </dependency>
+
     <!-- MySQL -->
     <dependency>
       <groupId>mysql</groupId>
@@ -46,5 +53,24 @@
   </dependencies>
   <build>
     <finalName>megacitycab</finalName>
+    <plugins>
+      <!-- Compiler Plugin -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.11.0</version>
+        <configuration>
+          <source>1.8</source>
+          <target>1.8</target>
+        </configuration>
+      </plugin>
+
+      <!-- WAR Plugin -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <version>3.3.2</version>
+      </plugin>
+    </plugins>
   </build>
 </project>
