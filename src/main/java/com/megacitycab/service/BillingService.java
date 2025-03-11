@@ -4,10 +4,11 @@ import com.megacitycab.dao.BillingDAO;
 import com.megacitycab.model.Billing;
 import com.megacitycab.model.Booking;
 import com.megacitycab.strategy.PricingStrategy;
+import java.util.List;
 
 public class BillingService {
     private final BillingDAO billingDao;
-    private PricingStrategy pricingStrategy; // Make it non-final to allow dynamic changes
+    private PricingStrategy pricingStrategy; // Allow dynamic changes
     private static final double TAX_RATE = 0.12; // 12% tax
 
     public BillingService(BillingDAO billingDao, PricingStrategy pricingStrategy) {
@@ -22,7 +23,7 @@ public class BillingService {
         // 2. Apply tax
         double tax = baseFare * TAX_RATE;
 
-        // 3. Apply discount (if any, e.g., coupon codes)
+        // 3. Apply discount (if any)
         double discount = 0; // Can be fetched from a DiscountService
 
         // 4. Final total
@@ -35,10 +36,22 @@ public class BillingService {
         billing.setTax(tax);
         billing.setDiscount(discount);
         billing.setTotal(total);
+        // Set pricing type based on the pricing strategy used
+        billing.setPricingType(pricingStrategy.getClass().getSimpleName().toLowerCase());
         billingDao.save(billing);
     }
 
-    // Add a method to dynamically set the pricing strategy
+    // Get billing details for a given booking
+    public Billing getBillingByBookingId(int bookingId) {
+        return billingDao.findByBookingId(bookingId);
+    }
+
+    // Retrieve all billing records
+    public List<Billing> getAllBillings() {
+        return billingDao.findAll();
+    }
+
+    // Dynamically update the pricing strategy
     public void setPricingStrategy(PricingStrategy pricingStrategy) {
         this.pricingStrategy = pricingStrategy;
     }

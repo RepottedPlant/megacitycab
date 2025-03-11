@@ -1,4 +1,3 @@
-// src/main/java/com/megacitycab/model/BookingDTO.java
 package com.megacitycab.dto;
 
 public class BookingDTO {

@@ -67,7 +67,7 @@
 
 <div class="container">
   <div class="menu">
-    <a href="${pageContext.request.contextPath}/protected/booking-management" class="menu-item">
+    <a href="${pageContext.request.contextPath}/protected/bookingManagement" class="menu-item">
       <h2>Booking Management</h2>
     </a>
     <a href="${pageContext.request.contextPath}/protected/customer-management" class="menu-item">
