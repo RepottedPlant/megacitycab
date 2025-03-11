@@ -9,11 +9,11 @@ import com.megacitycab.model.Booking;
 import com.megacitycab.model.Customer;
 import com.megacitycab.model.Fleet;
 import com.megacitycab.model.Billing;
+import com.megacitycab.observer.DriverNotifier;
 import com.megacitycab.strategy.PricingStrategy;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class BookingService {
@@ -21,7 +21,7 @@ public class BookingService {
     private final CustomerDAO customerDao;
     private final FleetDAO fleetDao;
     private BillingService billingService; // Allow dynamic changes
-    private final NotificationService notificationService;
+    private final NotificationService<Booking> notificationService;
 
     // Constructor Injection (DIP)
     public BookingService(
@@ -29,13 +29,16 @@ public class BookingService {
             CustomerDAO customerDao,
             FleetDAO fleetDao,
             BillingService billingService,
-            NotificationService notificationService
+            NotificationService<Booking> notificationService
     ) {
         this.bookingDao = bookingDao;
         this.customerDao = customerDao;
         this.fleetDao = fleetDao;
         this.billingService = billingService;
         this.notificationService = notificationService;
+
+        // Register observers (e.g., DriverNotifier)
+        notificationService.addObserver(new DriverNotifier());
     }
 
     public void createBooking(BookingDTO bookingDTO, PricingStrategy pricingStrategy) {
@@ -53,14 +56,13 @@ public class BookingService {
 
         // Save to Database
         bookingDao.save(booking);
+        System.out.println("Booking saved with ID: " + booking.getId());
 
-        // Update billing service with selected strategy
+        // Calculate billing with the selected strategy
         billingService.setPricingStrategy(pricingStrategy);
-
-        // Calculate Billing
         billingService.calculateTotal(booking);
 
-        // Notify Observers (Driver/Customer)
+        // Notify observers
         notificationService.notifyObservers(booking);
     }
 
@@ -96,5 +98,30 @@ public class BookingService {
             combinedList.add(new BookingBillingDTO(b, billing));
         }
         return combinedList;
+    }
+
+    public List<BookingBillingDTO> searchBookingBillingDetails(String searchQuery) {
+        List<Booking> bookings = searchBookings(searchQuery);
+        List<BookingBillingDTO> combinedList = new ArrayList<>();
+        for (Booking booking : bookings) {
+            Billing billing = billingService.getBillingByBookingId(booking.getId());
+            combinedList.add(new BookingBillingDTO(booking, billing));
+        }
+        return combinedList;
+    }
+
+    public void assignFleetToBooking(int bookingId, int fleetId) {
+        // Fetch the booking and fleet from the database
+        Booking booking = bookingDao.findById(bookingId);
+        Fleet fleet = fleetDao.findById(fleetId);
+
+        if (booking != null && fleet != null) {
+            // Assign the fleet to the booking
+            booking.setFleet(fleet);
+            fleetDao.updateFleetInfo(booking); // Update the booking in the database
+            System.out.println("Fleet assigned to booking successfully.");
+        } else {
+            System.out.println("Booking or fleet not found.");
+        }
     }
 }

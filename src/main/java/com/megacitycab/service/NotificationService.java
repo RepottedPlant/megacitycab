@@ -1,23 +1,26 @@
 package com.megacitycab.service;
 
-import com.megacitycab.model.Booking;
-import com.megacitycab.observer.BookingObserver;
-
+import com.megacitycab.observer.Observer;
 import java.util.ArrayList;
 import java.util.List;
 
-public class NotificationService {
-    private final List<BookingObserver> observers = new ArrayList<>();
+public class NotificationService<T> {
+    private final List<Observer<T>> observers = new ArrayList<>();
 
-    public void addObserver(BookingObserver observer) {
+    // Add an observer
+    public void addObserver(Observer<T> observer) {
         observers.add(observer);
     }
 
-    public void removeObserver(BookingObserver observer) {
+    // Remove an observer
+    public void removeObserver(Observer<T> observer) {
         observers.remove(observer);
     }
 
-    public void notifyObservers(Booking booking) {
-        observers.forEach(observer -> observer.notify(booking));
+    // Notify all observers
+    public void notifyObservers(T entity) {
+        for (Observer<T> observer : observers) {
+            observer.notify(entity);
+        }
     }
 }

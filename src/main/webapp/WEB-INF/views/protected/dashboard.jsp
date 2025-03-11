@@ -70,7 +70,7 @@
     <a href="${pageContext.request.contextPath}/protected/bookingManagement" class="menu-item">
       <h2>Booking Management</h2>
     </a>
-    <a href="${pageContext.request.contextPath}/protected/customer-management" class="menu-item">
+    <a href="${pageContext.request.contextPath}/protected/customerManagement" class="menu-item">
       <h2>Customer Management</h2>
     </a>
     <a href="${pageContext.request.contextPath}/protected/fleet-management" class="menu-item">

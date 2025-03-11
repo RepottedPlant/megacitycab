@@ -12,18 +12,19 @@ import java.util.List;
 public class BillingDAO {
 
     public void save(Billing billing) {
-        String sql = "INSERT INTO billings (booking_id, base_fare, tax, discount, total, pricing_type) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO billings (booking_id, base_fare, tax, total, pricing_type) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = DatabaseUtil.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, billing.getBooking().getId());
+            stmt.setInt(1, billing.getBooking().getId()); // Ensure booking ID is set
             stmt.setDouble(2, billing.getBaseFare());
             stmt.setDouble(3, billing.getTax());
-            stmt.setDouble(4, billing.getDiscount());
-            stmt.setDouble(5, billing.getTotal());
-            stmt.setString(6, billing.getPricingType());
+            stmt.setDouble(4, billing.getTotal());
+            stmt.setString(5, billing.getPricingType());
             stmt.executeUpdate();
+            System.out.println("Billing saved successfully for booking ID: " + billing.getBooking().getId());
         } catch (SQLException e) {
             e.printStackTrace();
+            System.out.println("Error saving billing: " + e.getMessage());
         }
     }
 
@@ -39,7 +40,6 @@ public class BillingDAO {
                         new com.megacitycab.dao.BookingDAO().findById(rs.getInt("booking_id")),
                         rs.getDouble("base_fare"),
                         rs.getDouble("tax"),
-                        rs.getDouble("discount"),
                         rs.getDouble("total"),
                         rs.getString("pricing_type")
                 );
@@ -63,7 +63,6 @@ public class BillingDAO {
                         new com.megacitycab.dao.BookingDAO().findById(rs.getInt("booking_id")),
                         rs.getDouble("base_fare"),
                         rs.getDouble("tax"),
-                        rs.getDouble("discount"),
                         rs.getDouble("total"),
                         rs.getString("pricing_type")
                 );

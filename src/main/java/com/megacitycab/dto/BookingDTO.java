@@ -77,6 +77,6 @@ public class BookingDTO {
     }
 
     public void setDistance(double distance) {
-        this.distance = distance;
+        this.distance = Math.round(distance * 100.0) / 100.0;
     }
 }

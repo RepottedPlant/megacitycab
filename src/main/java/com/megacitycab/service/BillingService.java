@@ -3,7 +3,7 @@ package com.megacitycab.service;
 import com.megacitycab.dao.BillingDAO;
 import com.megacitycab.model.Billing;
 import com.megacitycab.model.Booking;
-import com.megacitycab.strategy.PricingStrategy;
+import com.megacitycab.strategy.*;
 import java.util.List;
 
 public class BillingService {
@@ -23,21 +23,26 @@ public class BillingService {
         // 2. Apply tax
         double tax = baseFare * TAX_RATE;
 
-        // 3. Apply discount (if any)
-        double discount = 0; // Can be fetched from a DiscountService
-
         // 4. Final total
-        double total = baseFare + tax - discount;
+        double total = baseFare + tax;
 
-        // 5. Save billing
+        // 5. Create and save billing
         Billing billing = new Billing();
-        billing.setBooking(booking);
+        billing.setBooking(booking); // Ensure the booking is set
         billing.setBaseFare(baseFare);
         billing.setTax(tax);
-        billing.setDiscount(discount);
         billing.setTotal(total);
-        // Set pricing type based on the pricing strategy used
-        billing.setPricingType(pricingStrategy.getClass().getSimpleName().toLowerCase());
+        // Set pricing type based on the strategy
+        if (pricingStrategy instanceof PeakPricing) {
+            billing.setPricingType("Peak");
+        } else if (pricingStrategy instanceof DiscountPricing) {
+            billing.setPricingType("Discount");
+        } else {
+            billing.setPricingType("Standard"); // Default
+        }
+
+
+        // Save billing to the database
         billingDao.save(billing);
     }
 

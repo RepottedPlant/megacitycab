@@ -72,7 +72,6 @@
                 <th>Pricing Type</th>
                 <th>Base Fare</th>
                 <th>Tax</th>
-                <th>Discount</th>
                 <th>Total</th>
                 <th>Booking Date</th>
             </tr>
@@ -90,7 +89,6 @@
                     <td>${dto.billing.pricingType}</td>
                     <td>${dto.billing.baseFare}</td>
                     <td>${dto.billing.tax}</td>
-                    <td>${dto.billing.discount}</td>
                     <td>${dto.billing.total}</td>
                     <td>${dto.booking.bookingDate}</td>
                 </tr>
@@ -99,47 +97,7 @@
         </table>
     </div>
 </c:if>
-<%--
 
-<!-- Search Customers Section -->
-<div class="form-section search-section">
-    <h2>Search Customers</h2>
-    <form action="${pageContext.request.contextPath}/protected/bookingManagement" method="get">
-        <input type="hidden" name="action" value="searchCustomers">
-        <input type="text" name="searchQuery" placeholder="Enter Customer Name or Phone">
-        <button type="submit">Search Customers</button>
-    </form>
-</div>
-
-<!-- Existing Customers Table -->
-<c:if test="${not empty customers}">
-    <div class="form-section">
-        <h2>Existing Customers</h2>
-        <table>
-            <thead>
-            <tr>
-                <th>Customer ID</th>
-                <th>Name</th>
-                <th>Address</th>
-                <th>NIC</th>
-                <th>Phone</th>
-            </tr>
-            </thead>
-            <tbody>
-            <c:forEach var="customer" items="${customers}">
-                <tr>
-                    <td>${customer.id}</td>
-                    <td>${customer.name}</td>
-                    <td>${customer.address}</td>
-                    <td>${customer.nic}</td>
-                    <td>${customer.phone}</td>
-                </tr>
-            </c:forEach>
-            </tbody>
-        </table>
-    </div>
-</c:if>
---%>
 
 <!-- Booking Form -->
 <div class="form-section">
@@ -187,35 +145,73 @@
             <input type="number" name="distance" step="0.1" value="${booking.distance}" required>
         </div>
 
-        <!-- Vehicle Selection -->
-        <div class="vehicle-section">
-            <h3>Vehicle Details</h3>
-            <select name="fleetId" required>
-                <option value="">-- Select Vehicle --</option>
-                <c:forEach items="${vehicles}" var="vehicle">
-                    <option value="${vehicle.id}" ${vehicle.id == booking.fleet.id ? 'selected' : ''}>
-                            ${vehicle.vehicle_type} (${vehicle.plate_number})
-                    </option>
+        <!-- Vehicle Section -->
+        <div class="form-section">
+            <h3>Available Fleets</h3>
+            <table>
+                <thead>
+                <tr>
+                    <th>Driver Name</th>
+                    <th>Vehicle Type</th>
+                    <th>Plate Number</th>
+                    <th>Driver Contact</th>
+                    <th>Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                <c:forEach var="fleet" items="${fleets}">
+                    <tr>
+                        <td>${fleet.driverName}</td>
+                        <td>${fleet.vehicleType}</td>
+                        <td>${fleet.plateNumber}</td>
+                        <td>${fleet.driverContact}</td>
+                        <td>
+                            <button type="button" onclick="assignFleet(${fleet.id}, '${fleet.driverName}', '${fleet.vehicleType}', '${fleet.plateNumber}', '${fleet.driverContact}', '${fleet.vehicleType.basePrice}',
+                                    '${fleet.vehicleType.ratePerKm}')">Assign</button>
+                        </td>
+                    </tr>
                 </c:forEach>
-            </select>
+                </tbody>
+            </table>
         </div>
+
+        <!-- Hidden Input Fields for Fleet Assignment -->
+        <input type="hidden" id="fleetId" name="fleetId" value="">
+        <input type="hidden" id="fleetDetails" name="fleetDetails" value="">
+        <input type="hidden" id="basePrice" name="basePrice" value="">
+        <input type="hidden" id="ratePerKm" name="ratePerKm" value="">
 
         <!-- Pricing Strategy -->
-        <div class="pricing-section">
+        <div class="form-section">
             <label>Pricing Strategy:</label>
             <select name="pricingStrategy" required>
-                <option value="standard" ${booking.pricingStrategy == 'standard' ? 'selected' : ''}>Standard</option>
-                <option value="discount" ${booking.pricingStrategy == 'discount' ? 'selected' : ''}>Discount</option>
-                <option value="peak" ${booking.pricingStrategy == 'peak' ? 'selected' : ''}>Peak</option>
+                <option value="standard" ${booking.pricingStrategy == 'Standard' ? 'selected' : ''}>Standard</option>
+                <option value="discount" ${booking.pricingStrategy == 'Discount' ? 'selected' : ''}>Discount</option>
+                <option value="peak" ${booking.pricingStrategy == 'Peak' ? 'selected' : ''}>Peak</option>
             </select>
         </div>
 
+        <!-- Billing Details Section -->
+        <div class="form-section">
+            <h3>Billing Details</h3>
+            <table>
+                <tr>
+                    <th>Base Fare</th>
+                    <td>LKR <span id="displaySubtotal">0.00</span></td>
+                </tr>
+                <tr>
+                    <th>Tax (12%)</th>
+                    <td>LKR <span id="displayTax">0.00</span></td>
+                </tr>
+                <tr>
+                    <th>Total</th>
+                    <td>LKR <span id="displayTotal">0.00</span></td>
+                </tr>
+            </table>
+        </div>
         <!-- Form Actions -->
         <div class="form-actions">
-            <button type="submit">${empty param.id ? 'Create Booking' : 'Update Booking'}</button>
-            <c:if test="${not empty param.id}">
-                <button type="button" onclick="confirmDelete(${booking.id})">Delete Booking</button>
-            </c:if>
+            <button type="submit">Create Booking</button>
         </div>
     </form>
 </div>
@@ -228,11 +224,64 @@
         newCustomer.classList.toggle('hidden');
     }
 
-    function confirmDelete(bookingId) {
-        if (confirm('Are you sure you want to delete this booking?')) {
-            window.location.href = '${pageContext.request.contextPath}/protected/bookingManagement?action=delete&id=' + bookingId;
-        }
+    // Track pricing strategy, base, rate, and distance
+    let currentStrategy = "standard";
+    let currentBase = 0;
+    let currentRate = 0;
+    let currentDistance = 0;
+
+    function assignFleet(fleetId, driverName, vehicleType, plateNumber, driverContact, base, rate) {
+        // Update hidden fields
+        document.getElementById('fleetId').value = fleetId;
+        document.getElementById('fleetDetails').value = `${driverName} - ${vehicleType} (${plateNumber})`;
+        document.getElementById('basePrice').value = base;
+        document.getElementById('ratePerKm').value = rate;
+
+        // Update JavaScript variables
+        currentBase = parseFloat(base);
+        currentRate = parseFloat(rate);
+
+        // Recalculate pricing
+        calculatePricing();
     }
+
+    function calculatePricing() {
+        // Get distance from input
+        currentDistance = parseFloat(document.querySelector('input[name="distance"]').value) || 0;
+
+        // Calculate base and distance fare
+        const baseFare = currentBase;
+        const distanceFare = currentDistance * currentRate;
+        let subtotal = baseFare + distanceFare;
+
+
+
+        // Apply pricing strategy
+        switch (currentStrategy) {
+            case 'discount':
+                subtotal *= 0.9; // 10% discount
+                break;
+            case 'peak':
+                subtotal *= 1.2; // 20% peak pricing
+                break;
+            // 'standard' has no effect
+        }
+        // Apply tax (12%)
+        const tax = subtotal * 0.12;
+        let total = subtotal + tax;
+
+        // Update display
+        document.getElementById('displaySubtotal').textContent = subtotal.toFixed(2);
+        document.getElementById('displayTax').textContent = tax.toFixed(2);
+        document.getElementById('displayTotal').textContent = total.toFixed(2);
+    }
+
+    // Attach event listeners to inputs
+    document.querySelector('input[name="distance"]').addEventListener('input', calculatePricing);
+    document.querySelector('select[name="pricingStrategy"]').addEventListener('change', (e) => {
+        currentStrategy = e.target.value;
+        calculatePricing();
+    });
 </script>
 </body>
 </html>

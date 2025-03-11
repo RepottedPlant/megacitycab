@@ -1,12 +1,13 @@
 package com.megacitycab.dao;
 
+import com.megacitycab.model.Booking;
 import com.megacitycab.model.Fleet;
 import com.megacitycab.model.VehicleType;
 import com.megacitycab.util.DatabaseUtil;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FleetDAO {
     public void save(Fleet fleet) {
@@ -50,5 +51,55 @@ public class FleetDAO {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public List<Fleet> findAll() {
+        List<Fleet> fleets = new ArrayList<>();
+        String sql = "SELECT * FROM fleets";
+        try (Connection conn = DatabaseUtil.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                String typeStr = rs.getString("vehicle_type");
+                VehicleType vehicleType = null;
+                if (typeStr != null) {
+                    vehicleType = VehicleType.valueOf(typeStr.toUpperCase());
+                }
+                Fleet fleet = new Fleet(
+                        rs.getInt("id"),
+                        rs.getString("driver_name"),
+                        vehicleType,
+                        rs.getString("plate_number"),
+                        rs.getString("driver_contact")
+                );
+                fleets.add(fleet);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return fleets;
+    }
+
+    public void updateFleetInfo(Booking booking) {
+        String sql = "UPDATE bookings SET customer_id = ?, fleet_id = ?, pickup = ?, destination = ?, distance = ?, booking_date = ? WHERE id = ?";
+        try (Connection conn = DatabaseUtil.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, booking.getCustomer().getId());
+            if (booking.getFleet() != null) {
+                stmt.setInt(2, booking.getFleet().getId());
+            } else {
+                stmt.setNull(2, Types.INTEGER);
+            }
+            stmt.setString(3, booking.getPickup());
+            stmt.setString(4, booking.getDestination());
+            stmt.setDouble(5, booking.getDistance());
+            stmt.setObject(6, booking.getBookingDate());
+            stmt.setInt(7, booking.getId());
+
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }
