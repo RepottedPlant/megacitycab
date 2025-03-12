@@ -20,7 +20,7 @@ public class CustomerServlet extends HttpServlet {
     @Override
     public void init() {
         System.out.println("[DEBUG] CustomerServlet init() called. Initializing CustomerService.");
-        this.customerService = new CustomerService(new CustomerDAO(), new NotificationService<>());
+        this.customerService = new CustomerService(new CustomerDAO(), new NotificationService());
     }
 
     @Override

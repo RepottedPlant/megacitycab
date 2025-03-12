@@ -9,7 +9,8 @@ import com.megacitycab.model.Booking;
 import com.megacitycab.model.Customer;
 import com.megacitycab.model.Fleet;
 import com.megacitycab.model.Billing;
-import com.megacitycab.observer.DriverNotifier;
+import com.megacitycab.observer.CustomerNotifier;
+import com.megacitycab.observer.FleetNotifier;
 import com.megacitycab.strategy.PricingStrategy;
 
 import java.time.LocalDateTime;
@@ -20,16 +21,15 @@ public class BookingService {
     private final BookingDAO bookingDao;
     private final CustomerDAO customerDao;
     private final FleetDAO fleetDao;
-    private BillingService billingService; // Allow dynamic changes
-    private final NotificationService<Booking> notificationService;
+    private BillingService billingService;
+    private final NotificationService notificationService;
 
-    // Constructor Injection (DIP)
     public BookingService(
             BookingDAO bookingDao,
             CustomerDAO customerDao,
             FleetDAO fleetDao,
             BillingService billingService,
-            NotificationService<Booking> notificationService
+            NotificationService notificationService
     ) {
         this.bookingDao = bookingDao;
         this.customerDao = customerDao;
@@ -37,8 +37,9 @@ public class BookingService {
         this.billingService = billingService;
         this.notificationService = notificationService;
 
-        // Register observers (e.g., DriverNotifier)
-        notificationService.addObserver(new DriverNotifier());
+        // Register observers for Fleet and Customer
+        notificationService.addObserver(Fleet.class, new FleetNotifier());
+        notificationService.addObserver(Customer.class, new CustomerNotifier());
     }
 
     public void createBooking(BookingDTO bookingDTO, PricingStrategy pricingStrategy) {
@@ -62,8 +63,9 @@ public class BookingService {
         billingService.setPricingStrategy(pricingStrategy);
         billingService.calculateTotal(booking);
 
-        // Notify observers
-        notificationService.notifyObservers(booking);
+        // Notify observers for both Fleet and Customer
+        notificationService.notifyObservers(fleet, "BOOKING_CREATED");
+        notificationService.notifyObservers(customer, "BOOKING_CREATED");
     }
 
     // Setter for billingService (for dynamic updates)
@@ -119,9 +121,9 @@ public class BookingService {
             // Assign the fleet to the booking
             booking.setFleet(fleet);
             fleetDao.updateFleetInfo(booking); // Update the booking in the database
-            System.out.println("Fleet assigned to booking successfully.");
+            System.out.println("[SERVER LOG] Fleet assigned to booking successfully.");
         } else {
-            System.out.println("Booking or fleet not found.");
+            System.out.println("[SERVER LOG] Booking or fleet not found.");
         }
     }
 }

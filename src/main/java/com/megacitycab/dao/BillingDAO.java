@@ -21,7 +21,7 @@ public class BillingDAO {
             stmt.setDouble(4, billing.getTotal());
             stmt.setString(5, billing.getPricingType());
             stmt.executeUpdate();
-            System.out.println("Billing saved successfully for booking ID: " + billing.getBooking().getId());
+            System.out.println("[SERVER LOG] Billing saved successfully for booking ID: " + billing.getBooking().getId());
         } catch (SQLException e) {
             e.printStackTrace();
             System.out.println("Error saving billing: " + e.getMessage());

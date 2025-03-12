@@ -7,16 +7,16 @@ import java.util.List;
 
 public class CustomerService {
     private final CustomerDAO customerDao;
-    private final NotificationService<Customer> notificationService;
+    private final NotificationService notificationService;
 
     // Constructor Injection (DIP)
-    public CustomerService(CustomerDAO customerDao, NotificationService<Customer> notificationService) {
+    public CustomerService(CustomerDAO customerDao, NotificationService notificationService) {
         System.out.println("[DEBUG] Initializing CustomerService with CustomerDAO and NotificationService.");
         this.customerDao = customerDao;
         this.notificationService = notificationService;
 
         // Register the CustomerNotifier observer
-        notificationService.addObserver(new CustomerNotifier());
+        notificationService.addObserver(Customer.class, new CustomerNotifier());
         System.out.println("[DEBUG] CustomerNotifier observer registered.");
     }
 
@@ -35,7 +35,7 @@ public class CustomerService {
 
             // Notify observers (e.g., send welcome email)
             System.out.println("[DEBUG] Notifying observers...");
-            notificationService.notifyObservers(savedCustomer);
+            notificationService.notifyObservers(savedCustomer, "CREATED");
             System.out.println("[DEBUG] Observers notified.");
 
             return savedCustomer;
@@ -61,7 +61,7 @@ public class CustomerService {
 
                 // Notify observers (e.g., send update confirmation)
                 System.out.println("[DEBUG] Notifying observers...");
-                notificationService.notifyObservers(customer);
+                notificationService.notifyObservers(customer, "UPDATED");
                 System.out.println("[DEBUG] Observers notified.");
             } else {
                 System.out.println("[DEBUG] Failed to update customer: " + customer.getId());
@@ -94,7 +94,7 @@ public class CustomerService {
                 System.out.println("[DEBUG] Notifying observers...");
                 Customer deletedCustomer = new Customer();
                 deletedCustomer.setId(id);
-                notificationService.notifyObservers(deletedCustomer);
+                notificationService.notifyObservers(deletedCustomer, "DELETED");
                 System.out.println("[DEBUG] Observers notified.");
             } else {
                 System.out.println("[DEBUG] Failed to delete customer: " + id);

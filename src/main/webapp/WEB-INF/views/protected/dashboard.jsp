@@ -73,14 +73,14 @@
     <a href="${pageContext.request.contextPath}/protected/customerManagement" class="menu-item">
       <h2>Customer Management</h2>
     </a>
-    <a href="${pageContext.request.contextPath}/protected/fleet-management" class="menu-item">
+    <a href="${pageContext.request.contextPath}/protected/fleetManagement" class="menu-item">
       <h2>Fleet Management</h2>
     </a>
   </div>
     <%-- Show User Management and Reports only for Admins --%>
   <c:if test="${user.role == 'admin'}">
     <div class="menu">
-      <a href="${pageContext.request.contextPath}/protected/user-management" class="menu-item">
+      <a href="${pageContext.request.contextPath}/protected/userManagement" class="menu-item">
         <h2>User Management</h2>
       </a>
       <a href="${pageContext.request.contextPath}/protected/reports" class="menu-item">

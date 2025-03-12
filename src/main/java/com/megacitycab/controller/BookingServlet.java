@@ -157,7 +157,7 @@ public class BookingServlet extends HttpServlet {
         bookingService.createBooking(bookingDTO, strategy);
         System.out.println("Booking created successfully.");
 
-        // Redirect to success page
+        // Refresh page
         System.out.println("Reload to bookingManagement.jsp.");
         req.getRequestDispatcher("/WEB-INF/views/protected/bookingManagement.jsp").forward(req, resp);
     }
