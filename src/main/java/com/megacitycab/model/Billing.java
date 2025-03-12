@@ -1,4 +1,3 @@
-// src/main/java/com/megacitycab/model/Billing.java
 package com.megacitycab.model;
 
 public class Billing {
@@ -6,19 +5,20 @@ public class Billing {
     private Booking booking;
     private double baseFare;
     private double tax;
-    private double discount;
     private double total;
+    private String pricingType; // New field to track pricing strategy
 
     // Constructors
-    public Billing() {}
+    public Billing() {
+    }
 
-    public Billing(int id, Booking booking, double baseFare, double tax, double discount, double total) {
+    public Billing(int id, Booking booking, double baseFare, double tax, double total, String pricingType) {
         this.id = id;
         this.booking = booking;
         this.baseFare = baseFare;
         this.tax = tax;
-        this.discount = discount;
         this.total = total;
+        this.pricingType = pricingType;
     }
 
     // Getters and Setters
@@ -43,7 +43,7 @@ public class Billing {
     }
 
     public void setBaseFare(double baseFare) {
-        this.baseFare = baseFare;
+        this.baseFare = Math.round(baseFare * 100.0) / 100.0; // Round to 2 decimal places
     }
 
     public double getTax() {
@@ -51,15 +51,7 @@ public class Billing {
     }
 
     public void setTax(double tax) {
-        this.tax = tax;
-    }
-
-    public double getDiscount() {
-        return discount;
-    }
-
-    public void setDiscount(double discount) {
-        this.discount = discount;
+        this.tax = Math.round(tax * 100.0) / 100.0; // Round to 2 decimal places
     }
 
     public double getTotal() {
@@ -67,6 +59,14 @@ public class Billing {
     }
 
     public void setTotal(double total) {
-        this.total = total;
+        this.total = Math.round(total * 100.0) / 100.0; // Round to 2 decimal places
+    }
+
+    public String getPricingType() {
+        return pricingType;
+    }
+
+    public void setPricingType(String pricingType) {
+        this.pricingType = pricingType;
     }
 }

@@ -4,19 +4,21 @@ package com.megacitycab.model;
 public class Fleet {
     private int id;
     private String driverName;
-    private String vehicleType;
+    private VehicleType vehicleType;
     private String plateNumber;
-    private String phoneNumber;
+    private String driverContact;
+
 
     // Constructors
-    public Fleet() {}
+    public Fleet() {
+    }
 
-    public Fleet(int id, String driverName, String vehicleType, String plateNumber, String phoneNumber) {
+    public Fleet(int id, String driverName, VehicleType vehicleType, String plateNumber, String driverContact) {
         this.id = id;
         this.driverName = driverName;
         this.vehicleType = vehicleType;
         this.plateNumber = plateNumber;
-        this.phoneNumber = phoneNumber;
+        this.driverContact = driverContact;
     }
 
     // Getters and Setters
@@ -36,11 +38,11 @@ public class Fleet {
         this.driverName = driverName;
     }
 
-    public String getVehicleType() {
+    public VehicleType getVehicleType() {
         return vehicleType;
     }
 
-    public void setVehicleType(String vehicleType) {
+    public void setVehicleType(VehicleType vehicleType) {
         this.vehicleType = vehicleType;
     }
 
@@ -52,11 +54,11 @@ public class Fleet {
         this.plateNumber = plateNumber;
     }
 
-    public String getPhoneNumber() {
-        return phoneNumber;
+    public String getDriverContact() {
+        return driverContact;
     }
 
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
+    public void setDriverContact(String driverContact) {
+        this.driverContact = driverContact;
     }
 }
