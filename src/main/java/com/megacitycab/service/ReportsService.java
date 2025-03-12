@@ -12,6 +12,11 @@ public class ReportsService {
         this.reportsDao = new ReportsDAO();
     }
 
+    // Add a setter for reportsDao
+    public void setReportsDao(ReportsDAO reportsDao) {
+        this.reportsDao = reportsDao;
+    }
+
     public int getTotalBookings() {
         return reportsDao.getTotalBookings();
     }
