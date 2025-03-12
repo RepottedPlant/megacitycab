@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Customer Management</title>
+    <title>User Management</title>
     <style>
         :root {
             --primary-color: #2c3e50;
@@ -111,7 +111,7 @@
 <body>
 <div class="container">
     <div class="header">
-        <h1>Customer Management</h1>
+        <h1>User Management</h1>
         <a href="${pageContext.request.contextPath}/protected/dashboard" class="btn">Back to Dashboard</a>
     </div>
 
@@ -127,42 +127,38 @@
         </div>
     </c:if>
 
-    <!-- Search Customers Section -->
+    <!-- Search Users Section -->
     <div class="form-section">
-        <h2>Search Customers</h2>
-        <form action="${pageContext.request.contextPath}/protected/customerManagement" method="get">
-            <input type="hidden" name="action" value="searchCustomers">
-            <input type="text" name="searchQuery" placeholder="Enter Customer Name or Phone">
-            <button type="submit" class="btn">Search Customers</button>
+        <h2>Search Users</h2>
+        <form action="${pageContext.request.contextPath}/protected/userManagement" method="get">
+            <input type="hidden" name="action" value="searchUsers">
+            <input type="text" name="searchQuery" placeholder="Enter Username or Role">
+            <button type="submit" class="btn">Search Users</button>
         </form>
     </div>
 
-    <!-- Existing Customers Table -->
-    <c:if test="${not empty customers}">
+    <!-- Existing Users Table -->
+    <c:if test="${not empty users}">
         <div class="form-section">
-            <h2>Existing Customers</h2>
+            <h2>Existing Users</h2>
             <table>
                 <thead>
                 <tr>
-                    <th>Customer ID</th>
-                    <th>Name</th>
-                    <th>Address</th>
-                    <th>NIC</th>
-                    <th>Phone</th>
+                    <th>User ID</th>
+                    <th>Username</th>
+                    <th>Role</th>
                     <th>Actions</th>
                 </tr>
                 </thead>
                 <tbody>
-                <c:forEach var="customer" items="${customers}">
+                <c:forEach var="user" items="${users}">
                     <tr>
-                        <td>${customer.id}</td>
-                        <td>${customer.name}</td>
-                        <td>${customer.address}</td>
-                        <td>${customer.nic}</td>
-                        <td>${customer.phone}</td>
+                        <td>${user.id}</td>
+                        <td>${user.username}</td>
+                        <td>${user.role}</td>
                         <td>
-                            <a href="${pageContext.request.contextPath}/protected/customerManagement?action=edit&id=${customer.id}" class="btn" style="padding:5px 10px; margin-right:5px;">Edit</a>
-                            <a href="${pageContext.request.contextPath}/protected/customerManagement?action=delete&id=${customer.id}" onclick="return confirm('Are you sure you want to delete this customer?')" class="btn" style="padding:5px 10px;">Delete</a>
+                            <a href="${pageContext.request.contextPath}/protected/userManagement?action=edit&id=${user.id}" class="btn" style="padding:5px 10px; margin-right:5px;">Edit</a>
+                            <a href="${pageContext.request.contextPath}/protected/userManagement?action=delete&id=${user.id}" onclick="return confirm('Are you sure you want to delete this user?')" class="btn" style="padding:5px 10px;">Delete</a>
                         </td>
                     </tr>
                 </c:forEach>
@@ -171,46 +167,34 @@
         </div>
     </c:if>
 
-    <!-- Customer Form -->
+    <!-- User Form -->
     <div class="form-section">
-        <h2>${empty param.id ? 'Create New' : 'Edit'} Customer</h2>
-        <form action="${pageContext.request.contextPath}/protected/customerManagement" method="post">
-            <input type="hidden" name="customerId" value="${customer.id}">
-            <input type="hidden" name="action" value="createOrUpdateCustomer">
+        <h2>${empty param.id ? 'Create New' : 'Edit'} User</h2>
+        <form action="${pageContext.request.contextPath}/protected/userManagement" method="post">
+            <input type="hidden" name="userId" value="${user.id != null ? user.id : 0}">
+            <input type="hidden" name="action" value="createOrUpdateUser">
 
-            <!-- Customer Details -->
             <div>
-                <label>Full Name:</label>
-                <input type="text" name="name" value="${customer.name}" required>
+                <label>Username:</label>
+                <input type="text" name="username" value="${requestScope.user.username}" required>
             </div>
             <div>
-                <label>Phone Number:</label>
-                <input type="text" name="phone" value="${customer.phone}" required>
+                <label>Password:</label>
+                <input type="password" name="password" value="${requestScope.user.password}" required>
             </div>
             <div>
-                <label>NIC:</label>
-                <input type="text" name="nic" value="${customer.nic}" required>
+                <label>Role:</label>
+                <select name="role" required>
+                    <option value="">-- Select User Role --</option>
+                    <option value="admin" ${requestScope.user.role == 'admin' ? 'selected' : ''}>Admin</option>
+                    <option value="employee" ${requestScope.user.role == 'employee' ? 'selected' : ''}>Employee</option>
+                </select>
             </div>
-            <div>
-                <label>Address:</label>
-                <input type="text" name="address" value="${customer.address}" required>
-            </div>
-
-            <!-- Form Actions -->
             <div class="form-actions">
-                <button type="submit">${empty param.id ? 'Create Customer' : 'Update Customer'}</button>
+                <button type="submit">${empty param.id ? 'Create User' : 'Update User'}</button>
             </div>
         </form>
     </div>
 </div>
-
-<script>
-    function toggleCustomerForm() {
-        const existing = document.getElementById('existingCustomer');
-        const newCustomer = document.getElementById('newCustomer');
-        existing.classList.toggle('hidden');
-        newCustomer.classList.toggle('hidden');
-    }
-</script>
 </body>
 </html>

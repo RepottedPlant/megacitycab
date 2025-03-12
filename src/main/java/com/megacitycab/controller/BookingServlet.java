@@ -23,7 +23,6 @@ import java.util.List;
 public class BookingServlet extends HttpServlet {
     private BookingService bookingService;
 
-
     @Override
     public void init() {
         System.out.println("BookingServlet init() called. Initializing BookingService and dependencies.");
@@ -46,6 +45,21 @@ public class BookingServlet extends HttpServlet {
         String action = req.getParameter("action");
         String searchQuery = req.getParameter("searchQuery");
 
+        // Retrieve success/error messages from session
+        String success = (String) req.getSession().getAttribute("success");
+        String error = (String) req.getSession().getAttribute("error");
+
+        if (success != null) {
+            System.out.println("Success message found in session: " + success);
+            req.setAttribute("success", success);
+            req.getSession().removeAttribute("success"); // Clear the session attribute
+        }
+        if (error != null) {
+            System.out.println("Error message found in session: " + error);
+            req.setAttribute("error", error);
+            req.getSession().removeAttribute("error"); // Clear the session attribute
+        }
+
         List<BookingBillingDTO> bookingBillingList;
         if ("searchBookings".equals(action)) {
             bookingBillingList = bookingService.searchBookingBillingDetails(searchQuery);
@@ -53,6 +67,7 @@ public class BookingServlet extends HttpServlet {
             bookingBillingList = bookingService.getAllBookingBillingDetails();
         }
         req.setAttribute("bookingBillingList", bookingBillingList);
+
         // Also retrieve all customers for the booking form
         CustomerDAO customerDAO = new CustomerDAO();
         List<Customer> customers = customerDAO.findAll();
@@ -67,7 +82,6 @@ public class BookingServlet extends HttpServlet {
         req.getRequestDispatcher("/WEB-INF/views/protected/bookingManagement.jsp").forward(req, resp);
     }
 
-
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         System.out.println("BookingServlet doPost() called.");
@@ -80,8 +94,8 @@ public class BookingServlet extends HttpServlet {
 
             if (fleetIdParam == null || fleetIdParam.isEmpty() || bookingIdParam == null || bookingIdParam.isEmpty()) {
                 // Handle missing parameters
-                req.setAttribute("error", "Fleet ID or Booking ID is missing.");
-                req.getRequestDispatcher("/WEB-INF/views/protected/bookingManagement.jsp").forward(req, resp);
+                req.getSession().setAttribute("error", "Fleet ID or Booking ID is missing.");
+                resp.sendRedirect(req.getContextPath() + "/protected/bookingManagement");
                 return;
             }
 
@@ -92,13 +106,14 @@ public class BookingServlet extends HttpServlet {
                 System.out.println("Assigning fleet with ID: " + fleetId + " to booking with ID: " + bookingId);
                 bookingService.assignFleetToBooking(bookingId, fleetId);
 
-                // Redirect back to the booking management page
+                // Set success message and redirect
+                req.getSession().setAttribute("success", "Fleet assigned successfully.");
                 resp.sendRedirect(req.getContextPath() + "/protected/bookingManagement");
                 return;
             } catch (NumberFormatException e) {
                 // Handle invalid integer format
-                req.setAttribute("error", "Invalid Fleet ID or Booking ID.");
-                req.getRequestDispatcher("/WEB-INF/views/protected/bookingManagement.jsp").forward(req, resp);
+                req.getSession().setAttribute("error", "Invalid Fleet ID or Booking ID.");
+                resp.sendRedirect(req.getContextPath() + "/protected/bookingManagement");
                 return;
             }
         }
@@ -137,8 +152,8 @@ public class BookingServlet extends HttpServlet {
         } catch (Exception e) {
             System.out.println("Error parsing booking parameters: " + e.getMessage());
             e.printStackTrace();
-            req.setAttribute("error", "Invalid input. Please check the fields.");
-            req.getRequestDispatcher("/WEB-INF/views/protected/bookingManagement.jsp").forward(req, resp);
+            req.getSession().setAttribute("error", "Invalid input. Please check the fields.");
+            resp.sendRedirect(req.getContextPath() + "/protected/bookingManagement");
             return;
         }
 
@@ -157,9 +172,9 @@ public class BookingServlet extends HttpServlet {
         bookingService.createBooking(bookingDTO, strategy);
         System.out.println("Booking created successfully.");
 
-        // Refresh page
-        System.out.println("Reload to bookingManagement.jsp.");
-        req.getRequestDispatcher("/WEB-INF/views/protected/bookingManagement.jsp").forward(req, resp);
+        // Set success message and redirect
+        req.getSession().setAttribute("success", "Booking created successfully.");
+        resp.sendRedirect(req.getContextPath() + "/protected/bookingManagement");
     }
 
     private PricingStrategy getPricingStrategy(String strategy) {

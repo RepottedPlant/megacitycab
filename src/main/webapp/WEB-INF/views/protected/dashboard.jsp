@@ -1,97 +1,131 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard - Megacity Cab</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      background-color: #f4f4f4;
+    :root {
+      --primary-color: #2c3e50;
+      --secondary-color: #3498db;
+      --background-color: #f8f9fa;
+      --text-color: #2c3e50;
     }
-    .header {
-      background-color: #333;
-      color: #fff;
-      padding: 10px 20px;
-      text-align: center;
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--background-color);
+      color: var(--text-color);
+      margin: 0;
+      padding: 20px;
     }
     .container {
       max-width: 1200px;
-      margin: 20px auto;
-      padding: 20px;
-      background-color: #fff;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      margin: 0 auto;
     }
-    .menu {
+    .header {
       display: flex;
-      flex-wrap: wrap;
-      gap: 20px;
-      margin-top: 20px;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
     }
-    .menu-item {
-      flex: 1 1 calc(25% - 20px);
-      padding: 20px;
-      background-color: #007bff;
-      color: #fff;
-      text-align: center;
+    h1 {
+      color: var(--primary-color);
+      font-size: 2.5rem;
+      margin: 0;
+    }
+    .btn {
+      display: inline-block;
+      padding: 10px 20px;
+      background-color: var(--secondary-color);
+      color: white;
       text-decoration: none;
       border-radius: 5px;
+      transition: background-color 0.3s;
+      border: none;
+      cursor: pointer;
+    }
+    .btn:hover {
+      background-color: #2980b9;
+    }
+    .dashboard-card {
+      background: white;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+      margin-bottom: 30px;
+    }
+    .dashboard-card h2 {
+      color: var(--secondary-color);
+      margin-bottom: 15px;
+    }
+    /* Grid layout for the navigation menu */
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+    }
+    /* Menu items styled like cards/buttons */
+    .menu-item {
+      background-color: var(--secondary-color);
+      color: #fff;
+      border-radius: 5px;
+      padding: 30px 0;
+      text-align: center;
       transition: background-color 0.3s ease;
+      text-decoration: none;
+      font-weight: bold;
+      text-transform: uppercase;
     }
     .menu-item:hover {
-      background-color: #0056b3;
+      background-color: #2980b9;
     }
-    .logout {
-      margin-top: 20px;
-      text-align: center;
-    }
-    .logout a {
-      color: #007bff;
-      text-decoration: none;
-    }
-    .logout a:hover {
-      text-decoration: underline;
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 2rem;
+      }
     }
   </style>
 </head>
 <body>
-<div class="header">
-  <h1>Dashboard</h1>
-  <p>Welcome, ${user.username} (${user.role})</p>
-  <p>Debug: User Role = ${user.role}</p> <!-- Debug statement -->
-</div>
-
 <div class="container">
-  <div class="menu">
-    <a href="${pageContext.request.contextPath}/protected/bookingManagement" class="menu-item">
-      <h2>Booking Management</h2>
-    </a>
-    <a href="${pageContext.request.contextPath}/protected/customerManagement" class="menu-item">
-      <h2>Customer Management</h2>
-    </a>
-    <a href="${pageContext.request.contextPath}/protected/fleetManagement" class="menu-item">
-      <h2>Fleet Management</h2>
-    </a>
-  </div>
-    <%-- Show User Management and Reports only for Admins --%>
-  <c:if test="${user.role == 'admin'}">
-    <div class="menu">
-      <a href="${pageContext.request.contextPath}/protected/userManagement" class="menu-item">
-        <h2>User Management</h2>
-      </a>
-      <a href="${pageContext.request.contextPath}/protected/reports" class="menu-item">
-        <h2>Reports</h2>
-      </a>
+  <!-- Header Section -->
+  <div class="header">
+    <h1>Dashboard</h1>
+    <!-- Displaying user info in plain text; you can style further if needed -->
+    <div>
+      <a href="${pageContext.request.contextPath}/logout" class="btn">Logout</a>
     </div>
-  </c:if>
-
-  <div class="logout">
-    <a href="${pageContext.request.contextPath}/logout">Logout</a>
   </div>
+
+  <div class="dashboard-card" style="margin-bottom: 10px;">
+    <p style="margin: 0;">Welcome, ${user.username} (${user.role})</p>
+  </div>
+
+  <!-- Main Navigation -->
+  <div class="dashboard-card">
+    <h2>Navigation</h2>
+    <div class="menu-grid">
+      <a href="${pageContext.request.contextPath}/protected/bookingManagement" class="menu-item">
+        <h3>Booking Management</h3>
+      </a>
+      <a href="${pageContext.request.contextPath}/protected/customerManagement" class="menu-item">
+        <h3>Customer Management</h3>
+      </a>
+      <a href="${pageContext.request.contextPath}/protected/fleetManagement" class="menu-item">
+        <h3>Fleet Management</h3>
+      </a>
+      <c:if test="${user.role == 'admin'}">
+        <a href="${pageContext.request.contextPath}/protected/userManagement" class="menu-item">
+          <h3>User Management</h3>
+        </a>
+        <a href="${pageContext.request.contextPath}/protected/reports" class="menu-item">
+          <h3>Reports</h3>
+        </a>
+      </c:if>
+    </div>
+  </div>
+
 </div>
 </body>
 </html>
