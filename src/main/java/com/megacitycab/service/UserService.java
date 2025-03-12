@@ -65,7 +65,6 @@ public class UserService {
             if (id <= 0) {
                 throw new IllegalArgumentException("Invalid user ID.");
             }
-
             // Fetch the user's username before deletion
             String deletedUsername = userDao.findById(id).getUsername();
 
