@@ -5,17 +5,18 @@ public class Customer {
     private String name;
     private String address;
     private String nic; // National Identity Card
-    private String telephone;
+    private String phone;
 
     // Constructors
-    public Customer() {}
+    public Customer() {
+    }
 
-    public Customer(int id, String name, String address, String nic, String telephone) {
+    public Customer(int id, String name, String address, String nic, String phone) {
         this.id = id;
         this.name = name;
         this.address = address;
         this.nic = nic;
-        this.telephone = telephone;
+        this.phone = phone;
     }
 
     // Getters and Setters
@@ -51,11 +52,11 @@ public class Customer {
         this.nic = nic;
     }
 
-    public String getTelephone() {
-        return telephone;
+    public String getPhone() {
+        return phone;
     }
 
-    public void setTelephone(String telephone) {
-        this.telephone = telephone;
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 }
