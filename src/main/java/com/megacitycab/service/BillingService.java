@@ -4,12 +4,13 @@ import com.megacitycab.dao.BillingDAO;
 import com.megacitycab.model.Billing;
 import com.megacitycab.model.Booking;
 import com.megacitycab.strategy.*;
+
 import java.util.List;
 
 public class BillingService {
+    private static final double TAX_RATE = 0.12; // 12% tax
     private final BillingDAO billingDao;
     private PricingStrategy pricingStrategy; // Allow dynamic changes
-    private static final double TAX_RATE = 0.12; // 12% tax
 
     public BillingService(BillingDAO billingDao, PricingStrategy pricingStrategy) {
         this.billingDao = billingDao;

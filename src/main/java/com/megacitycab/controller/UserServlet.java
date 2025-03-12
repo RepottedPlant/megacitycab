@@ -20,13 +20,13 @@ public class UserServlet extends HttpServlet {
 
     @Override
     public void init() {
-        System.out.println("[DEBUG] UserServlet init() called. Initializing UserService.");
+
         this.userService = new UserService(new UserDAO(), new NotificationService());
     }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        System.out.println("[DEBUG] UserServlet doGet() called.");
+
         String action = req.getParameter("action");
         String searchQuery = req.getParameter("searchQuery");
 
@@ -72,7 +72,7 @@ public class UserServlet extends HttpServlet {
             if (userIdParam != null && !userIdParam.isEmpty()) {
                 try {
                     int userId = Integer.parseInt(userIdParam);
-                    System.out.println("[DEBUG] Deleting user with ID: " + userId);
+
                     boolean isDeleted = userService.deleteUser(userId);
                     if (isDeleted) {
                         req.setAttribute("success", "User deleted successfully.");
@@ -92,7 +92,7 @@ public class UserServlet extends HttpServlet {
 
         // Load users for display ONLY if not searching
         if (!"searchUsers".equals(action)) {
-            System.out.println("[DEBUG] Retrieving all users for display.");
+
             users = userService.findAllUsers();
         }
 
@@ -102,56 +102,51 @@ public class UserServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        System.out.println("[DEBUG] UserServlet doPost() called.");
+
         String action = req.getParameter("action");
 
         if ("createOrUpdateUser".equals(action)) {
-            System.out.println("[DEBUG] Handling createOrUpdateUser action.");
+
             User user = new User();
             String userIdParam = req.getParameter("userId");
 
             try {
                 // Populate user details from the form
-                System.out.println("[DEBUG] Populating user details from the form.");
+
                 user.setUsername(req.getParameter("username"));
                 user.setPassword(req.getParameter("password"));
                 user.setRole(req.getParameter("role")); // Ensure role is set from the form
 
-                System.out.println("[DEBUG] User details: " + user);
 
                 if (userIdParam != null && !userIdParam.isEmpty()) {
                     // Update existing user
-                    System.out.println("[DEBUG] Updating existing user with ID: " + userIdParam);
+
                     user.setId(Integer.parseInt(userIdParam));
                     boolean isUpdated = userService.updateUser(user);
                     if (isUpdated) {
-                        System.out.println("[DEBUG] User updated successfully: " + user.getId());
                         req.setAttribute("success", "User updated successfully.");
                     } else {
-                        System.out.println("[DEBUG] Failed to update user: " + user.getId());
                         req.setAttribute("error", "Failed to update user.");
                     }
                 } else {
                     // Create new user
-                    System.out.println("[DEBUG] Creating new user.");
+
                     user = userService.createUser(user);
-                    System.out.println("[DEBUG] User created successfully with ID: " + user.getId());
                     req.setAttribute("success", "User created successfully.");
                 }
             } catch (Exception e) {
-                System.out.println("[DEBUG] Error processing user: " + e.getMessage());
                 e.printStackTrace();
                 req.setAttribute("error", "Invalid input. Please check the fields.");
             }
         }
 
         // Retrieve all users for display
-        System.out.println("[DEBUG] Retrieving all users for display.");
+
         List<User> users = userService.findAllUsers();
         req.setAttribute("users", users);
 
         // Forward to the user management page (reloads the page with updated data)
-        System.out.println("[DEBUG] Forwarding to userManagement.jsp.");
+
         req.getRequestDispatcher("/WEB-INF/views/protected/userManagement.jsp").forward(req, resp);
     }
 }

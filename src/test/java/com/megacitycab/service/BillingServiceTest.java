@@ -9,6 +9,7 @@ import com.megacitycab.strategy.PricingStrategy;
 import com.megacitycab.strategy.StandardPricing;
 import org.junit.Before;
 import org.junit.Test;
+
 import static org.junit.Assert.*;
 
 import java.util.ArrayList;
@@ -19,35 +20,6 @@ public class BillingServiceTest {
     private BillingService billingService;
     private BillingDAOStub billingDAOStub;
     private PricingStrategy pricingStrategy;
-
-    // Manual stub for BillingDAO
-    static class BillingDAOStub extends BillingDAO {
-        private Billing billingToReturn;
-        private List<Billing> allBillings = new ArrayList<>();
-
-        void setBillingToReturn(Billing billing) {
-            this.billingToReturn = billing;
-        }
-
-        void setAllBillings(List<Billing> billings) {
-            this.allBillings = billings;
-        }
-
-        @Override
-        public void save(Billing billing) {
-            allBillings.add(billing); // Simulate saving to a list
-        }
-
-        @Override
-        public Billing findByBookingId(int bookingId) {
-            return billingToReturn; // Return the predefined billing
-        }
-
-        @Override
-        public List<Billing> findAll() {
-            return allBillings; // Return the predefined list of billings
-        }
-    }
 
     @Before
     public void setUp() {
@@ -138,5 +110,34 @@ public class BillingServiceTest {
 
         // Assert
         // No direct assertion, but you can verify behavior in other tests
+    }
+
+    // Manual stub for BillingDAO
+    static class BillingDAOStub extends BillingDAO {
+        private Billing billingToReturn;
+        private List<Billing> allBillings = new ArrayList<>();
+
+        void setBillingToReturn(Billing billing) {
+            this.billingToReturn = billing;
+        }
+
+        void setAllBillings(List<Billing> billings) {
+            this.allBillings = billings;
+        }
+
+        @Override
+        public void save(Billing billing) {
+            allBillings.add(billing); // Simulate saving to a list
+        }
+
+        @Override
+        public Billing findByBookingId(int bookingId) {
+            return billingToReturn; // Return the predefined billing
+        }
+
+        @Override
+        public List<Billing> findAll() {
+            return allBillings; // Return the predefined list of billings
+        }
     }
 }

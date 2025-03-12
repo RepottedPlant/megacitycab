@@ -10,7 +10,8 @@ public class Fleet {
 
 
     // Constructors
-    public Fleet() {}
+    public Fleet() {
+    }
 
     public Fleet(int id, String driverName, VehicleType vehicleType, String plateNumber, String driverContact) {
         this.id = id;

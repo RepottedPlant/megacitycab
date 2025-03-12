@@ -8,7 +8,8 @@ public class Customer {
     private String phone;
 
     // Constructors
-    public Customer() {}
+    public Customer() {
+    }
 
     public Customer(int id, String name, String address, String nic, String phone) {
         this.id = id;

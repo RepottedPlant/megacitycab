@@ -4,6 +4,7 @@ import com.megacitycab.dao.CustomerDAO;
 import com.megacitycab.model.Customer;
 import org.junit.Before;
 import org.junit.Test;
+
 import static org.junit.Assert.*;
 
 import java.util.ArrayList;
@@ -14,61 +15,6 @@ public class CustomerServiceTest {
     private CustomerService customerService;
     private CustomerDAOStub customerDAOStub;
     private NotificationServiceStub notificationServiceStub;
-
-    // Manual stub for CustomerDAO
-    static class CustomerDAOStub extends CustomerDAO {
-        private List<Customer> customers = new ArrayList<>();
-        private Customer customerToReturn;
-
-        void setCustomerToReturn(Customer customer) {
-            this.customerToReturn = customer;
-        }
-
-        void setAllCustomers(List<Customer> customers) {
-            this.customers = customers;
-        }
-
-        @Override
-        public Customer save(Customer customer) {
-            customers.add(customer); // Simulate saving to a list
-            return customer;
-        }
-
-        @Override
-        public boolean update(Customer customer) {
-            // Simulate updating a customer
-            return true;
-        }
-
-        @Override
-        public boolean delete(int id) {
-            // Simulate deleting a customer
-            return true;
-        }
-
-        @Override
-        public Customer findById(int id) {
-            return customerToReturn; // Return the predefined customer
-        }
-
-        @Override
-        public List<Customer> findAll() {
-            return customers; // Return the predefined list of customers
-        }
-
-        @Override
-        public List<Customer> findByNameOrPhone(String searchQuery) {
-            return customers; // Simulate search functionality
-        }
-    }
-
-    // Manual stub for NotificationService
-    static class NotificationServiceStub extends NotificationService {
-        @Override
-        public void notifyObservers(Object entity, String eventType) {
-            // Simulate notification
-        }
-    }
 
     @Before
     public void setUp() {
@@ -91,6 +37,10 @@ public class CustomerServiceTest {
         assertEquals("123 Main St", savedCustomer.getAddress());
         assertEquals("123456789V", savedCustomer.getNic());
         assertEquals("123-456-7890", savedCustomer.getPhone());
+
+        // Verify notification
+        assertEquals(1, notificationServiceStub.getNotifications().size());
+        assertEquals("Thank you for choosing Mega City Cabs John Doe", notificationServiceStub.getNotifications().get(0));
     }
 
     @Test
@@ -103,18 +53,28 @@ public class CustomerServiceTest {
 
         // Assert
         assertTrue(isUpdated);
+
+        // Verify notification
+        assertEquals(1, notificationServiceStub.getNotifications().size());
+        assertEquals("Your details have been updated John Doe", notificationServiceStub.getNotifications().get(0));
     }
 
     @Test
     public void testDeleteCustomer() {
         // Arrange
         int customerId = 1;
+        Customer customer = new Customer(1, "John Doe", "123 Main St", "123456789V", "123-456-7890");
+        customerDAOStub.setCustomerToReturn(customer); // Ensure the customer is returned when fetched
 
         // Act
         boolean isDeleted = customerService.deleteCustomer(customerId);
 
         // Assert
         assertTrue(isDeleted);
+
+        // Verify notification
+        assertEquals(1, notificationServiceStub.getNotifications().size());
+        assertEquals("You have been removed from our database John Doe", notificationServiceStub.getNotifications().get(0));
     }
 
     @Test
@@ -174,5 +134,66 @@ public class CustomerServiceTest {
         assertEquals(2, result.size());
         assertEquals("John Doe", result.get(0).getName());
         assertEquals("Jane Doe", result.get(1).getName());
+    }
+
+    // Manual stub for CustomerDAO
+    static class CustomerDAOStub extends CustomerDAO {
+        private List<Customer> customers = new ArrayList<>();
+        private Customer customerToReturn;
+
+        void setCustomerToReturn(Customer customer) {
+            this.customerToReturn = customer;
+        }
+
+        void setAllCustomers(List<Customer> customers) {
+            this.customers = customers;
+        }
+
+        @Override
+        public Customer save(Customer customer) {
+            customers.add(customer); // Simulate saving to a list
+            return customer;
+        }
+
+        @Override
+        public boolean update(Customer customer) {
+            // Simulate updating a customer
+            return true;
+        }
+
+        @Override
+        public boolean delete(int id) {
+            // Simulate deleting a customer
+            return true;
+        }
+
+        @Override
+        public Customer findById(int id) {
+            return customerToReturn; // Return the predefined customer
+        }
+
+        @Override
+        public List<Customer> findAll() {
+            return customers; // Return the predefined list of customers
+        }
+
+        @Override
+        public List<Customer> findByNameOrPhone(String searchQuery) {
+            return customers; // Simulate search functionality
+        }
+    }
+
+    // Manual stub for NotificationService
+    static class NotificationServiceStub extends NotificationService {
+        private List<String> notifications = new ArrayList<>();
+
+        @Override
+        public void notifyObservers(Object entity, String message) {
+            notifications.add(message); // Simulate notification
+        }
+
+        List<String> getNotifications() {
+            return notifications;
+        }
     }
 }

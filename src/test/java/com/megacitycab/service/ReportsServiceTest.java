@@ -5,6 +5,7 @@ import com.megacitycab.dto.CustomerRevenueDTO;
 import com.megacitycab.dto.DriverRevenueDTO;
 import org.junit.Before;
 import org.junit.Test;
+
 import static org.junit.Assert.*;
 
 import java.util.HashMap;
@@ -14,70 +15,6 @@ public class ReportsServiceTest {
 
     private ReportsService reportsService;
     private ReportsDAOStub reportsDAOStub;
-
-    // Manual stub for ReportsDAO
-    static class ReportsDAOStub extends ReportsDAO {
-        private int totalBookings = 10;
-        private double totalRevenue = 5000.0;
-        private Map<String, Integer> bookingCountByPricingStrategy = new HashMap<>();
-        private Map<String, Integer> bookingCountByVehicleType = new HashMap<>();
-        private int driverCount = 5;
-        private Map<String, Integer> bookingCountByDriver = new HashMap<>();
-        private int customerCount = 20;
-        private CustomerRevenueDTO highestRevenueCustomer = new CustomerRevenueDTO(1, "John Doe", 1000.0);
-        private DriverRevenueDTO highestRevenueDriver = new DriverRevenueDTO("Driver One", 2000.0);
-        private Map<String, Integer> userCountByRole = new HashMap<>();
-
-        @Override
-        public int getTotalBookings() {
-            return totalBookings;
-        }
-
-        @Override
-        public double getTotalRevenue() {
-            return totalRevenue;
-        }
-
-        @Override
-        public Map<String, Integer> getBookingCountByPricingStrategy() {
-            return bookingCountByPricingStrategy;
-        }
-
-        @Override
-        public Map<String, Integer> getBookingCountByVehicleType() {
-            return bookingCountByVehicleType;
-        }
-
-        @Override
-        public int getDriverCount() {
-            return driverCount;
-        }
-
-        @Override
-        public Map<String, Integer> getBookingCountByDriver() {
-            return bookingCountByDriver;
-        }
-
-        @Override
-        public int getCustomerCount() {
-            return customerCount;
-        }
-
-        @Override
-        public CustomerRevenueDTO getHighestRevenueCustomer() {
-            return highestRevenueCustomer;
-        }
-
-        @Override
-        public DriverRevenueDTO getHighestRevenueDriver() {
-            return highestRevenueDriver;
-        }
-
-        @Override
-        public Map<String, Integer> getUserCountByRole() {
-            return userCountByRole;
-        }
-    }
 
     @Before
     public void setUp() {
@@ -209,5 +146,69 @@ public class ReportsServiceTest {
         assertEquals(2, result.size());
         assertEquals(2, (int) result.get("admin"));
         assertEquals(5, (int) result.get("employee"));
+    }
+
+    // Manual stub for ReportsDAO
+    static class ReportsDAOStub extends ReportsDAO {
+        private int totalBookings = 10;
+        private double totalRevenue = 5000.0;
+        private Map<String, Integer> bookingCountByPricingStrategy = new HashMap<>();
+        private Map<String, Integer> bookingCountByVehicleType = new HashMap<>();
+        private int driverCount = 5;
+        private Map<String, Integer> bookingCountByDriver = new HashMap<>();
+        private int customerCount = 20;
+        private CustomerRevenueDTO highestRevenueCustomer = new CustomerRevenueDTO(1, "John Doe", 1000.0);
+        private DriverRevenueDTO highestRevenueDriver = new DriverRevenueDTO("Driver One", 2000.0);
+        private Map<String, Integer> userCountByRole = new HashMap<>();
+
+        @Override
+        public int getTotalBookings() {
+            return totalBookings;
+        }
+
+        @Override
+        public double getTotalRevenue() {
+            return totalRevenue;
+        }
+
+        @Override
+        public Map<String, Integer> getBookingCountByPricingStrategy() {
+            return bookingCountByPricingStrategy;
+        }
+
+        @Override
+        public Map<String, Integer> getBookingCountByVehicleType() {
+            return bookingCountByVehicleType;
+        }
+
+        @Override
+        public int getDriverCount() {
+            return driverCount;
+        }
+
+        @Override
+        public Map<String, Integer> getBookingCountByDriver() {
+            return bookingCountByDriver;
+        }
+
+        @Override
+        public int getCustomerCount() {
+            return customerCount;
+        }
+
+        @Override
+        public CustomerRevenueDTO getHighestRevenueCustomer() {
+            return highestRevenueCustomer;
+        }
+
+        @Override
+        public DriverRevenueDTO getHighestRevenueDriver() {
+            return highestRevenueDriver;
+        }
+
+        @Override
+        public Map<String, Integer> getUserCountByRole() {
+            return userCountByRole;
+        }
     }
 }

@@ -13,7 +13,8 @@ public class Booking {
     private LocalDateTime bookingDate;
 
     // Constructors
-    public Booking() {}
+    public Booking() {
+    }
 
     public Booking(int id, Customer customer, Fleet fleet, String pickup, String destination, double distance, LocalDateTime bookingDate) {
         this.id = id;

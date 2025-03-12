@@ -11,6 +11,7 @@ import com.megacitycab.service.BillingService;
 import com.megacitycab.service.BookingService;
 import com.megacitycab.service.NotificationService;
 import com.megacitycab.strategy.*;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -27,16 +28,12 @@ public class BookingServlet extends HttpServlet {
     public void init() {
         System.out.println("BookingServlet init() called. Initializing BookingService and dependencies.");
         // Initialize dependencies with proper DAOs
-        this.bookingService = new BookingService(
-                new BookingDAO(),       // Use your existing BookingDAO
+        this.bookingService = new BookingService(new BookingDAO(),       // Use your existing BookingDAO
                 new CustomerDAO(),      // Use your existing CustomerDAO
                 new FleetDAO(),         // Use your existing FleetDAO
-                new BillingService(
-                        new com.megacitycab.dao.BillingDAO(),   // Use your existing BillingDAO
+                new BillingService(new com.megacitycab.dao.BillingDAO(),   // Use your existing BillingDAO
                         new StandardPricing() // Default strategy
-                ),
-                new NotificationService()
-        );
+                ), new NotificationService());
     }
 
     @Override

@@ -6,6 +6,7 @@ import com.megacitycab.model.Fleet;
 import com.megacitycab.model.VehicleType;
 import org.junit.Before;
 import org.junit.Test;
+
 import static org.junit.Assert.*;
 
 import java.util.ArrayList;
@@ -16,20 +17,6 @@ public class NotificationServiceTest {
     private NotificationService notificationService;
     private ObserverStub<Customer> customerObserver;
     private ObserverStub<Fleet> fleetObserver;
-
-    // Manual stub for Observer
-    static class ObserverStub<T> implements Observer<T> {
-        private List<String> notifications = new ArrayList<>();
-
-        @Override
-        public void notify(T entity, String eventType) {
-            notifications.add(eventType + ":" + entity.toString()); // Simulate notification
-        }
-
-        List<String> getNotifications() {
-            return notifications;
-        }
-    }
 
     @Before
     public void setUp() {
@@ -45,12 +32,12 @@ public class NotificationServiceTest {
 
         // Act
         Customer customer = new Customer(1, "John Doe", "123 Main St", "123456789V", "123-456-7890");
-        notificationService.notifyObservers(customer, "CREATED");
+        notificationService.notifyObservers(customer, "A new customer has been created.");
 
         // Assert
         List<String> notifications = customerObserver.getNotifications();
         assertEquals(1, notifications.size());
-        assertEquals("CREATED:" + customer.toString(), notifications.get(0));
+        assertEquals("A new customer has been created.:" + customer.toString(), notifications.get(0));
     }
 
     @Test
@@ -61,7 +48,7 @@ public class NotificationServiceTest {
 
         // Act
         Customer customer = new Customer(1, "John Doe", "123 Main St", "123456789V", "123-456-7890");
-        notificationService.notifyObservers(customer, "CREATED");
+        notificationService.notifyObservers(customer, "A new customer has been created.");
 
         // Assert
         List<String> notifications = customerObserver.getNotifications();
@@ -78,18 +65,18 @@ public class NotificationServiceTest {
         Fleet fleet = new Fleet(1, "Driver One", VehicleType.ZIP, "ABC123", "987-654-3210");
 
         // Act
-        notificationService.notifyObservers(customer, "CREATED");
-        notificationService.notifyObservers(fleet, "UPDATED");
+        notificationService.notifyObservers(customer, "A new customer has been created.");
+        notificationService.notifyObservers(fleet, "Fleet details have been updated.");
 
         // Assert
         List<String> customerNotifications = customerObserver.getNotifications();
         List<String> fleetNotifications = fleetObserver.getNotifications();
 
         assertEquals(1, customerNotifications.size());
-        assertEquals("CREATED:" + customer.toString(), customerNotifications.get(0));
+        assertEquals("A new customer has been created.:" + customer.toString(), customerNotifications.get(0));
 
         assertEquals(1, fleetNotifications.size());
-        assertEquals("UPDATED:" + fleet.toString(), fleetNotifications.get(0));
+        assertEquals("Fleet details have been updated.:" + fleet.toString(), fleetNotifications.get(0));
     }
 
     @Test
@@ -98,10 +85,24 @@ public class NotificationServiceTest {
         Customer customer = new Customer(1, "John Doe", "123 Main St", "123456789V", "123-456-7890");
 
         // Act
-        notificationService.notifyObservers(customer, "CREATED");
+        notificationService.notifyObservers(customer, "A new customer has been created.");
 
         // Assert
         List<String> customerNotifications = customerObserver.getNotifications();
         assertEquals(0, customerNotifications.size()); // No notifications should be received
+    }
+
+    // Manual stub for Observer
+    static class ObserverStub<T> implements Observer<T> {
+        private List<String> notifications = new ArrayList<>();
+
+        @Override
+        public void notify(T entity, String message) {
+            notifications.add(message + ":" + entity.toString()); // Simulate notification
+        }
+
+        List<String> getNotifications() {
+            return notifications;
+        }
     }
 }

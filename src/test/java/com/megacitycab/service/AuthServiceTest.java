@@ -13,27 +13,6 @@ public class AuthServiceTest {
     private AuthService authService;
     private UserDAOStub userDAOStub;
 
-    // Manual stub for UserDAO
-    static class UserDAOStub extends UserDAO {
-        private User userToReturn;
-
-        void setUserToReturn(User user) {
-            this.userToReturn = user;
-        }
-
-        @Override
-        public User findByUsername(String username) {
-            return userToReturn;
-        }
-
-        @Override public void save(User user) {}
-        @Override public boolean update(User user) { return false; }
-        @Override public boolean delete(int id) { return false; }
-        @Override public List<User> findAll() { return null; }
-        @Override public List<User> findByUsernameOrRole(String searchQuery) { return null; }
-        @Override public User findById(int id) { return null; }
-    }
-
     @Before
     public void setUp() {
         userDAOStub = new UserDAOStub();
@@ -78,5 +57,48 @@ public class AuthServiceTest {
 
         // Assert
         Assert.assertNull(result);
+    }
+
+    // Manual stub for UserDAO
+    static class UserDAOStub extends UserDAO {
+        private User userToReturn;
+
+        void setUserToReturn(User user) {
+            this.userToReturn = user;
+        }
+
+        @Override
+        public User findByUsername(String username) {
+            return userToReturn;
+        }
+
+        @Override
+        public void save(User user) {
+        }
+
+        @Override
+        public boolean update(User user) {
+            return false;
+        }
+
+        @Override
+        public boolean delete(int id) {
+            return false;
+        }
+
+        @Override
+        public List<User> findAll() {
+            return null;
+        }
+
+        @Override
+        public List<User> findByUsernameOrRole(String searchQuery) {
+            return null;
+        }
+
+        @Override
+        public User findById(int id) {
+            return null;
+        }
     }
 }

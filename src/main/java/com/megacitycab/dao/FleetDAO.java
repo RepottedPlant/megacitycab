@@ -4,6 +4,7 @@ import com.megacitycab.model.Booking;
 import com.megacitycab.model.Fleet;
 import com.megacitycab.model.VehicleType;
 import com.megacitycab.util.DatabaseUtil;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;

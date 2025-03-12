@@ -3,6 +3,7 @@ package com.megacitycab.dao;
 import com.megacitycab.dto.CustomerRevenueDTO;
 import com.megacitycab.dto.DriverRevenueDTO;
 import com.megacitycab.util.DatabaseUtil;
+
 import java.sql.*;
 import java.util.HashMap;
 import java.util.Map;
@@ -15,10 +16,10 @@ public class ReportsDAO {
         try (Connection conn = DatabaseUtil.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             ResultSet rs = stmt.executeQuery();
-            if(rs.next()){
+            if (rs.next()) {
                 return rs.getInt(1);
             }
-        } catch(SQLException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return 0;
@@ -30,10 +31,10 @@ public class ReportsDAO {
         try (Connection conn = DatabaseUtil.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             ResultSet rs = stmt.executeQuery();
-            if(rs.next()){
+            if (rs.next()) {
                 return rs.getDouble(1);
             }
-        } catch(SQLException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return 0;
@@ -43,13 +44,13 @@ public class ReportsDAO {
     public Map<String, Integer> getBookingCountByPricingStrategy() {
         Map<String, Integer> map = new HashMap<>();
         String sql = "SELECT pricing_type, COUNT(*) as count FROM billings GROUP BY pricing_type";
-        try(Connection conn = DatabaseUtil.getConnection();
-            PreparedStatement stmt = conn.prepareStatement(sql)){
+        try (Connection conn = DatabaseUtil.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
             ResultSet rs = stmt.executeQuery();
-            while(rs.next()){
+            while (rs.next()) {
                 map.put(rs.getString("pricing_type"), rs.getInt("count"));
             }
-        } catch(SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return map;
@@ -61,13 +62,13 @@ public class ReportsDAO {
         String sql = "SELECT f.vehicle_type, COUNT(*) as count " +
                 "FROM bookings b JOIN fleets f ON b.fleet_id = f.id " +
                 "GROUP BY f.vehicle_type";
-        try(Connection conn = DatabaseUtil.getConnection();
-            PreparedStatement stmt = conn.prepareStatement(sql)){
+        try (Connection conn = DatabaseUtil.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
             ResultSet rs = stmt.executeQuery();
-            while(rs.next()){
+            while (rs.next()) {
                 map.put(rs.getString("vehicle_type"), rs.getInt("count"));
             }
-        } catch(SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return map;
@@ -76,13 +77,13 @@ public class ReportsDAO {
     // Number of drivers (distinct driver names in fleets)
     public int getDriverCount() {
         String sql = "SELECT COUNT(DISTINCT driver_name) FROM fleets WHERE driver_name IS NOT NULL";
-        try(Connection conn = DatabaseUtil.getConnection();
-            PreparedStatement stmt = conn.prepareStatement(sql)){
+        try (Connection conn = DatabaseUtil.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
             ResultSet rs = stmt.executeQuery();
-            if(rs.next()){
+            if (rs.next()) {
                 return rs.getInt(1);
             }
-        } catch(SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return 0;
@@ -94,13 +95,13 @@ public class ReportsDAO {
         String sql = "SELECT f.driver_name, COUNT(*) as count " +
                 "FROM bookings b JOIN fleets f ON b.fleet_id = f.id " +
                 "GROUP BY f.driver_name";
-        try(Connection conn = DatabaseUtil.getConnection();
-            PreparedStatement stmt = conn.prepareStatement(sql)){
+        try (Connection conn = DatabaseUtil.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
             ResultSet rs = stmt.executeQuery();
-            while(rs.next()){
+            while (rs.next()) {
                 map.put(rs.getString("driver_name"), rs.getInt("count"));
             }
-        } catch(SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return map;
@@ -109,13 +110,13 @@ public class ReportsDAO {
     // Total number of customers
     public int getCustomerCount() {
         String sql = "SELECT COUNT(*) FROM customers";
-        try(Connection conn = DatabaseUtil.getConnection();
-            PreparedStatement stmt = conn.prepareStatement(sql)){
+        try (Connection conn = DatabaseUtil.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
             ResultSet rs = stmt.executeQuery();
-            if(rs.next()){
+            if (rs.next()) {
                 return rs.getInt(1);
             }
-        } catch(SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return 0;
@@ -129,13 +130,13 @@ public class ReportsDAO {
                 "JOIN billings bi ON b.id = bi.booking_id " +
                 "GROUP BY c.id, c.name " +
                 "ORDER BY revenue DESC LIMIT 1";
-        try(Connection conn = DatabaseUtil.getConnection();
-            PreparedStatement stmt = conn.prepareStatement(sql)){
+        try (Connection conn = DatabaseUtil.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
             ResultSet rs = stmt.executeQuery();
-            if(rs.next()){
+            if (rs.next()) {
                 return new CustomerRevenueDTO(rs.getInt("id"), rs.getString("name"), rs.getDouble("revenue"));
             }
-        } catch(SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return null;
@@ -149,13 +150,13 @@ public class ReportsDAO {
                 "JOIN billings bi ON b.id = bi.booking_id " +
                 "GROUP BY f.driver_name " +
                 "ORDER BY revenue DESC LIMIT 1";
-        try(Connection conn = DatabaseUtil.getConnection();
-            PreparedStatement stmt = conn.prepareStatement(sql)){
+        try (Connection conn = DatabaseUtil.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
             ResultSet rs = stmt.executeQuery();
-            if(rs.next()){
+            if (rs.next()) {
                 return new DriverRevenueDTO(rs.getString("driver_name"), rs.getDouble("revenue"));
             }
-        } catch(SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return null;
@@ -165,13 +166,13 @@ public class ReportsDAO {
     public Map<String, Integer> getUserCountByRole() {
         Map<String, Integer> map = new HashMap<>();
         String sql = "SELECT role, COUNT(*) as count FROM users GROUP BY role";
-        try(Connection conn = DatabaseUtil.getConnection();
-            PreparedStatement stmt = conn.prepareStatement(sql)){
+        try (Connection conn = DatabaseUtil.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
             ResultSet rs = stmt.executeQuery();
-            while(rs.next()){
+            while (rs.next()) {
                 map.put(rs.getString("role"), rs.getInt("count"));
             }
-        } catch(SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return map;

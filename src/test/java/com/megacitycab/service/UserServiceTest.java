@@ -4,6 +4,7 @@ import com.megacitycab.dao.UserDAO;
 import com.megacitycab.model.User;
 import org.junit.Before;
 import org.junit.Test;
+
 import static org.junit.Assert.*;
 
 import java.util.ArrayList;
@@ -14,61 +15,6 @@ public class UserServiceTest {
     private UserService userService;
     private UserDAOStub userDAOStub;
     private NotificationServiceStub notificationServiceStub;
-
-    // Manual stub for UserDAO
-    static class UserDAOStub extends UserDAO {
-        private List<User> users = new ArrayList<>();
-        private User userToReturn;
-
-        void setUserToReturn(User user) {
-            this.userToReturn = user;
-        }
-
-        void setAllUsers(List<User> users) {
-            this.users = users;
-        }
-
-        @Override
-        public void save(User user) {
-            user.setId(users.size() + 1); // Simulate auto-generated ID
-            users.add(user); // Simulate saving to a list
-        }
-
-        @Override
-        public boolean update(User user) {
-            // Simulate updating a user
-            return true;
-        }
-
-        @Override
-        public boolean delete(int id) {
-            // Simulate deleting a user
-            return true;
-        }
-
-        @Override
-        public User findById(int id) {
-            return userToReturn; // Return the predefined user
-        }
-
-        @Override
-        public List<User> findAll() {
-            return users; // Return the predefined list of users
-        }
-
-        @Override
-        public List<User> findByUsernameOrRole(String searchQuery) {
-            return users; // Simulate search functionality
-        }
-    }
-
-    // Manual stub for NotificationService
-    static class NotificationServiceStub extends NotificationService {
-        @Override
-        public void notifyObservers(Object entity, String eventType) {
-            // Simulate notification
-        }
-    }
 
     @Before
     public void setUp() {
@@ -91,6 +37,10 @@ public class UserServiceTest {
         assertEquals("admin", savedUser.getUsername());
         assertEquals("password123", savedUser.getPassword());
         assertEquals("admin", savedUser.getRole());
+
+        // Verify notification
+        assertEquals(1, notificationServiceStub.getNotifications().size());
+        assertEquals("You have been added to Mega City Cabs system admin", notificationServiceStub.getNotifications().get(0));
     }
 
     @Test
@@ -103,18 +53,28 @@ public class UserServiceTest {
 
         // Assert
         assertTrue(isUpdated);
+
+        // Verify notification
+        assertEquals(1, notificationServiceStub.getNotifications().size());
+        assertEquals("You details have been updated admin", notificationServiceStub.getNotifications().get(0));
     }
 
     @Test
     public void testDeleteUser() {
         // Arrange
         int userId = 1;
+        User user = new User(1, "admin", "password123", "admin");
+        userDAOStub.setUserToReturn(user); // Ensure the user is returned when fetched
 
         // Act
         boolean isDeleted = userService.deleteUser(userId);
 
         // Assert
         assertTrue(isDeleted);
+
+        // Verify notification
+        assertEquals(1, notificationServiceStub.getNotifications().size());
+        assertEquals("You have been removed from Mega City Cabs system admin", notificationServiceStub.getNotifications().get(0));
     }
 
     @Test
@@ -173,5 +133,66 @@ public class UserServiceTest {
         assertEquals(2, result.size()); // Simulated search returns all users
         assertEquals("admin", result.get(0).getUsername());
         assertEquals("employee", result.get(1).getUsername());
+    }
+
+    // Manual stub for UserDAO
+    static class UserDAOStub extends UserDAO {
+        private List<User> users = new ArrayList<>();
+        private User userToReturn;
+
+        void setUserToReturn(User user) {
+            this.userToReturn = user;
+        }
+
+        void setAllUsers(List<User> users) {
+            this.users = users;
+        }
+
+        @Override
+        public void save(User user) {
+            user.setId(users.size() + 1); // Simulate auto-generated ID
+            users.add(user); // Simulate saving to a list
+        }
+
+        @Override
+        public boolean update(User user) {
+            // Simulate updating a user
+            return true;
+        }
+
+        @Override
+        public boolean delete(int id) {
+            // Simulate deleting a user
+            return true;
+        }
+
+        @Override
+        public User findById(int id) {
+            return userToReturn; // Return the predefined user
+        }
+
+        @Override
+        public List<User> findAll() {
+            return users; // Return the predefined list of users
+        }
+
+        @Override
+        public List<User> findByUsernameOrRole(String searchQuery) {
+            return users; // Simulate search functionality
+        }
+    }
+
+    // Manual stub for NotificationService
+    static class NotificationServiceStub extends NotificationService {
+        private List<String> notifications = new ArrayList<>();
+
+        @Override
+        public void notifyObservers(Object entity, String message) {
+            notifications.add(message); // Simulate notification
+        }
+
+        List<String> getNotifications() {
+            return notifications;
+        }
     }
 }

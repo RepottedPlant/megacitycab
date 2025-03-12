@@ -21,11 +21,11 @@ public class NotificationService {
         }
     }
 
-    public <T> void notifyObservers(T entity, String eventType) {
+    public <T> void notifyObservers(T entity, String message) {
         List<Observer<?>> typeObservers = observers.get(entity.getClass());
         if (typeObservers != null) {
             for (Observer<?> observer : typeObservers) {
-                ((Observer<T>) observer).notify(entity, eventType);
+                ((Observer<T>) observer).notify(entity, message);
             }
         }
     }

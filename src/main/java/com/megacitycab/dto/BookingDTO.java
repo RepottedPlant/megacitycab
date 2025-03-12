@@ -10,7 +10,8 @@ public class BookingDTO {
     private double distance;
 
     // Constructors
-    public BookingDTO() {}
+    public BookingDTO() {
+    }
 
     public BookingDTO(int customerId, int fleetId, String customerName, String nic,
                       String pickup, String destination, double distance) {

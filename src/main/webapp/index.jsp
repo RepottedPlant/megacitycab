@@ -66,7 +66,6 @@
 <body>
 <div class="container">
     <h1>Welcome to Megacity Cab!</h1>
-    <p>Book your ride now:</p>
     <a href="<%= request.getContextPath() %>/login" class="btn">Login</a>
 </div>
 </body>

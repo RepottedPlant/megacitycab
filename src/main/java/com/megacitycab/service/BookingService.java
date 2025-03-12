@@ -21,8 +21,8 @@ public class BookingService {
     private final BookingDAO bookingDao;
     private final CustomerDAO customerDao;
     private final FleetDAO fleetDao;
-    private BillingService billingService;
     private final NotificationService notificationService;
+    private BillingService billingService;
 
     public BookingService(
             BookingDAO bookingDao,
@@ -64,17 +64,17 @@ public class BookingService {
         billingService.calculateTotal(booking);
 
         // Notify observers for both Fleet and Customer
-        notificationService.notifyObservers(fleet, "BOOKING_CREATED");
-        notificationService.notifyObservers(customer, "BOOKING_CREATED");
+        notificationService.notifyObservers(fleet, "A booking has been created" + booking);
+        notificationService.notifyObservers(customer, "A booking has been created" + booking);
+    }
+
+    public BillingService getBillingService() {
+        return this.billingService;
     }
 
     // Setter for billingService (for dynamic updates)
     public void setBillingService(BillingService billingService) {
         this.billingService = billingService;
-    }
-
-    public BillingService getBillingService() {
-        return this.billingService;
     }
 
     public List<Booking> getAllBookings() {

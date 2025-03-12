@@ -15,6 +15,7 @@ import com.megacitycab.strategy.PricingStrategy;
 import com.megacitycab.strategy.StandardPricing;
 import org.junit.Before;
 import org.junit.Test;
+
 import static org.junit.Assert.*;
 
 import java.util.ArrayList;
@@ -28,95 +29,6 @@ public class BookingServiceTest {
     private FleetDAOStub fleetDAOStub;
     private BillingServiceStub billingServiceStub;
     private NotificationServiceStub notificationServiceStub;
-
-    // Manual stubs for DAOs and services
-    static class BookingDAOStub extends BookingDAO {
-        private List<Booking> bookings = new ArrayList<>();
-        private Booking bookingToReturn;
-
-        void setBookingToReturn(Booking booking) {
-            this.bookingToReturn = booking;
-        }
-
-        void setAllBookings(List<Booking> bookings) {
-            this.bookings = bookings;
-        }
-
-        @Override
-        public void save(Booking booking) {
-            bookings.add(booking);
-        }
-
-        @Override
-        public Booking findById(int id) {
-            return bookingToReturn;
-        }
-
-        @Override
-        public List<Booking> findAll() {
-            return bookings;
-        }
-
-        @Override
-        public List<Booking> searchAllColumns(String searchQuery) {
-            return bookings;
-        }
-    }
-
-    static class CustomerDAOStub extends CustomerDAO {
-        private Customer customerToReturn;
-
-        void setCustomerToReturn(Customer customer) {
-            this.customerToReturn = customer;
-        }
-
-        @Override
-        public Customer findById(int id) {
-            return customerToReturn;
-        }
-    }
-
-    static class FleetDAOStub extends FleetDAO {
-        private Fleet fleetToReturn;
-
-        void setFleetToReturn(Fleet fleet) {
-            this.fleetToReturn = fleet;
-        }
-
-        @Override
-        public Fleet findById(int id) {
-            return fleetToReturn;
-        }
-
-        @Override
-        public void updateFleetInfo(Booking booking) {
-            // Simulate updating fleet info
-        }
-    }
-
-    static class BillingServiceStub extends BillingService {
-        private Billing billingToReturn;
-
-        public BillingServiceStub(BillingDAO billingDao, PricingStrategy pricingStrategy) {
-            super(billingDao, pricingStrategy);
-        }
-
-        void setBillingToReturn(Billing billing) {
-            this.billingToReturn = billing;
-        }
-
-        @Override
-        public Billing getBillingByBookingId(int bookingId) {
-            return billingToReturn;
-        }
-    }
-
-    static class NotificationServiceStub extends NotificationService {
-        @Override
-        public void notifyObservers(Object entity, String eventType) {
-            // Simulate notification
-        }
-    }
 
     @Before
     public void setUp() {
@@ -161,6 +73,11 @@ public class BookingServiceTest {
         assertEquals(10.0, savedBooking.getDistance(), 0.01);
         assertEquals(customer, savedBooking.getCustomer());
         assertEquals(fleet, savedBooking.getFleet());
+
+        // Verify notification
+        assertEquals(2, notificationServiceStub.getNotifications().size()); // Two notifications are sent
+        assertEquals("A booking has been created" + savedBooking.toString(), notificationServiceStub.getNotifications().get(0));
+        assertEquals("A booking has been created" + savedBooking.toString(), notificationServiceStub.getNotifications().get(1));
     }
 
     @Test
@@ -278,6 +195,101 @@ public class BookingServiceTest {
         bookingService.assignFleetToBooking(1, 1);
 
         // Assert
-        // No direct assertion, but you can verify behavior in other tests
+        // No notifications are sent, so no assertions for notifications
+    }
+
+    // Manual stubs for DAOs and services
+    static class BookingDAOStub extends BookingDAO {
+        private List<Booking> bookings = new ArrayList<>();
+        private Booking bookingToReturn;
+
+        void setBookingToReturn(Booking booking) {
+            this.bookingToReturn = booking;
+        }
+
+        void setAllBookings(List<Booking> bookings) {
+            this.bookings = bookings;
+        }
+
+        @Override
+        public void save(Booking booking) {
+            bookings.add(booking);
+        }
+
+        @Override
+        public Booking findById(int id) {
+            return bookingToReturn;
+        }
+
+        @Override
+        public List<Booking> findAll() {
+            return bookings;
+        }
+
+        @Override
+        public List<Booking> searchAllColumns(String searchQuery) {
+            return bookings;
+        }
+    }
+
+    static class CustomerDAOStub extends CustomerDAO {
+        private Customer customerToReturn;
+
+        void setCustomerToReturn(Customer customer) {
+            this.customerToReturn = customer;
+        }
+
+        @Override
+        public Customer findById(int id) {
+            return customerToReturn;
+        }
+    }
+
+    static class FleetDAOStub extends FleetDAO {
+        private Fleet fleetToReturn;
+
+        void setFleetToReturn(Fleet fleet) {
+            this.fleetToReturn = fleet;
+        }
+
+        @Override
+        public Fleet findById(int id) {
+            return fleetToReturn;
+        }
+
+        @Override
+        public void updateFleetInfo(Booking booking) {
+            // Simulate updating fleet info
+        }
+    }
+
+    static class BillingServiceStub extends BillingService {
+        private Billing billingToReturn;
+
+        public BillingServiceStub(BillingDAO billingDao, PricingStrategy pricingStrategy) {
+            super(billingDao, pricingStrategy);
+        }
+
+        void setBillingToReturn(Billing billing) {
+            this.billingToReturn = billing;
+        }
+
+        @Override
+        public Billing getBillingByBookingId(int bookingId) {
+            return billingToReturn;
+        }
+    }
+
+    static class NotificationServiceStub extends NotificationService {
+        private List<String> notifications = new ArrayList<>();
+
+        @Override
+        public void notifyObservers(Object entity, String message) {
+            notifications.add(message); // Simulate notification
+        }
+
+        List<String> getNotifications() {
+            return notifications;
+        }
     }
 }

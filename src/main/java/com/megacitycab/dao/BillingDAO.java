@@ -2,6 +2,7 @@ package com.megacitycab.dao;
 
 import com.megacitycab.model.Billing;
 import com.megacitycab.util.DatabaseUtil;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -30,8 +31,7 @@ public class BillingDAO {
 
     public Billing findByBookingId(int bookingId) {
         String sql = "SELECT * FROM billings WHERE booking_id = ?";
-        try (Connection conn = DatabaseUtil.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (Connection conn = DatabaseUtil.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, bookingId);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
